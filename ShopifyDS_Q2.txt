@@ -1,4 +1,5 @@
 Q2.
+
 a) How many orders were shipped by Speedy Express in total?
 
 SELECT Count(*)
@@ -8,6 +9,7 @@ ON Orders.ShipperID = Shippers.ShipperID
 WHERE ShipperName = "Speedy Express"
 
 Result: 54
+-------------------------------------------------------------------------------
 
 b) What is the last name of the employee with the most orders?
 
@@ -37,6 +39,7 @@ HAVING Count(*) = (
 )
 
 Result: Peacock
+-------------------------------------------------------------------------------
 
 c) What product was ordered the most by customers in Germany?
 
