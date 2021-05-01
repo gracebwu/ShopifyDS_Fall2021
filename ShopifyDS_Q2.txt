@@ -1,0 +1,66 @@
+Q2.
+a) How many orders were shipped by Speedy Express in total?
+
+SELECT Count(*)
+FROM Orders 
+LEFT JOIN Shippers 
+ON Orders.ShipperID = Shippers.ShipperID
+WHERE ShipperName = "Speedy Express"
+
+Result: 54
+
+b) What is the last name of the employee with the most orders?
+
+SELECT LastName
+FROM Orders
+LEFT JOIN Employees
+ON Orders.EmployeeID = Employees.EmployeeID
+GROUP BY Orders.EmployeeID
+HAVING Count(*) = (
+	SELECT Max(ordercount) 
+	FROM (
+		SELECT Count(*) as ordercount
+		FROM Orders
+		GROUP BY EmployeeID
+	)
+)
+
+Note: The reason I chose to use nested subqueries instead of an 
+ORDER BY COUNT(*) DESC LIMIT 1 is because this method returns all the 
+last names corresponding to the max orders if there is more than one
+employee with the same number of orders.
+
+Result: Peacock
+
+c) What product was ordered the most by customers in Germany?
+
+SELECT ProductName
+FROM Orders
+LEFT JOIN Customers
+ON Orders.CustomerID = Customers.CustomerID
+LEFT JOIN OrderDetails
+ON Orders.OrderID = OrderDetails.OrderID
+LEFT JOIN Products
+ON OrderDetails.ProductID = Products.ProductID
+WHERE Country = "Germany"
+GROUP BY Products.ProductID
+HAVING sum(Quantity) = (
+	SELECT max(sumorders) 
+	FROM (
+		SELECT sum(Quantity) as sumorders
+		FROM Orders
+		LEFT JOIN Customers
+		ON Orders.CustomerID = Customers.CustomerID
+		LEFT JOIN OrderDetails
+		ON Orders.OrderID = OrderDetails.OrderID
+		WHERE Country = "Germany"
+		GROUP BY ProductID
+	)
+)
+
+Note: The reason I chose to use nested subqueries instead of an 
+ORDER BY COUNT(*) DESC LIMIT 1 is because this method returns all the 
+products corresponding to the max quantity if there is more than one
+product with the same total order quantity.
+
+Result: Boston Crab Meat
