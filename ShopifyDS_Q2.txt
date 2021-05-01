@@ -11,6 +11,17 @@ Result: 54
 
 b) What is the last name of the employee with the most orders?
 
+If we only need one employee with most orders:
+
+SELECT LastName as ordercount
+FROM Orders
+LEFT JOIN Employees
+ON Orders.EmployeeID = Employees.EmployeeID
+GROUP BY Orders.EmployeeID
+ORDER BY COUNT(*) DESC LIMIT 1;
+
+If we want all the employees with most orders:
+
 SELECT LastName
 FROM Orders
 LEFT JOIN Employees
@@ -25,14 +36,25 @@ HAVING Count(*) = (
 	)
 )
 
-Note: The reason I chose to use nested subqueries instead of an 
-ORDER BY COUNT(*) DESC LIMIT 1 is because this method returns all the 
-last names corresponding to the max orders if there is more than one
-employee with the same number of orders.
-
 Result: Peacock
 
 c) What product was ordered the most by customers in Germany?
+
+If we only need one product with max order quantity:
+
+SELECT ProductName
+FROM Orders
+LEFT JOIN Customers
+ON Orders.CustomerID = Customers.CustomerID
+LEFT JOIN OrderDetails
+ON Orders.OrderID = OrderDetails.OrderID
+LEFT JOIN Products
+ON OrderDetails.ProductID = Products.ProductID
+WHERE Country = "Germany"
+GROUP BY Products.ProductID
+ORDER BY SUM(Quantity) DESC LIMIT 1
+
+If we want all the products with max order quantity:
 
 SELECT ProductName
 FROM Orders
@@ -57,10 +79,5 @@ HAVING sum(Quantity) = (
 		GROUP BY ProductID
 	)
 )
-
-Note: The reason I chose to use nested subqueries instead of an 
-ORDER BY COUNT(*) DESC LIMIT 1 is because this method returns all the 
-products corresponding to the max quantity if there is more than one
-product with the same total order quantity.
 
 Result: Boston Crab Meat
